@@ -43,3 +43,30 @@ g.add_edge(2, 3)
 g.add_edge(3, 4)
 
 g.graph_color(3)  # Try coloring with 3 colors
+
+
+
+
+# -----------------------------
+# User Input Section
+# -----------------------------
+
+# Input number of vertices
+v = int(input("Enter number of vertices: "))
+g = Graph(v)
+
+# Input number of edges
+e = int(input("Enter number of edges: "))
+
+print("Enter edges as pairs (e.g., '0 1'):")
+
+# Add edges
+for _ in range(e):
+    u, v = map(int, input().split())
+    g.add_edge(u, v)
+
+# Input number of colors to try
+m = int(input("Enter number of colors: "))
+
+# Solve graph coloring
+g.graph_color(m)
