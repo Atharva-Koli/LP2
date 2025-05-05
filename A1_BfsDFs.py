@@ -1,16 +1,17 @@
 # ========================== #
-#      Common Graph (Tree)
+#       User Input Graph
 # ========================== #
 
-graph = {
-    'A': ['B', 'C'],
-    'B': ['D', 'E'],
-    'C': ['F'],
-    'D': [],
-    'E': ['F'],
-    'F': []
-}
-
+def get_graph_from_user():
+    graph = {}
+    n = int(input("Enter the number of nodes: "))
+    
+    for _ in range(n):
+        node = input("Enter node name (e.g., A): ")
+        children = input(f"Enter children of {node} separated by space (or leave blank if none): ")
+        graph[node] = children.split() if children else []
+    
+    return graph
 
 # ========================== #
 #       Depth First Search
@@ -20,7 +21,7 @@ def dfs(graph, start, visited=None):
     if visited is None:
         visited = set()
     visited.add(start)
-    print(start, end=' ')  # Process node
+    print(start, end=' ')
 
     for neighbor in graph[start]:
         if neighbor not in visited:
@@ -29,26 +30,20 @@ def dfs(graph, start, visited=None):
     return visited
 
 
-print("=== Depth-First Search ===")
-dfs(graph, 'A')
-
-print("\n")  # Spacer between outputs
-
-
 # =========================== #
 #     Breadth First Search
 # =========================== #
 
 def bfs(graph, start):
-    visited = []  # List to track visited nodes
-    queue = []    # BFS queue
+    visited = []
+    queue = []
 
     visited.append(start)
     queue.append(start)
 
     while queue:
         node = queue.pop(0)
-        print(node, end=' ')  # Process node
+        print(node, end=' ')
 
         for neighbor in graph[node]:
             if neighbor not in visited:
@@ -56,5 +51,15 @@ def bfs(graph, start):
                 queue.append(neighbor)
 
 
-print("=== Breadth-First Search ===")
-bfs(graph, 'A')
+# ============================ #
+#         Main Program
+# ============================ #
+
+graph = get_graph_from_user()
+start_node = input("Enter the start node for traversal: ")
+
+print("\n=== Depth-First Search ===")
+dfs(graph, start_node)
+
+print("\n\n=== Breadth-First Search ===")
+bfs(graph, start_node)
