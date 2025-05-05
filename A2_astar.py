@@ -1,30 +1,20 @@
 # Assignment 2
-# A* Search Algorithm Implementation with comments
+# A* Search Algorithm Implementation with user input and detailed comments
 
-# Heuristic function for A* (h(n))
-def heuristic(n):
-    H_dist = {
-        'A': 11,
-        'B': 6,
-        'C': 99,
-        'D': 1,
-        'E': 7,
-        'G': 0,
-    }
+def heuristic(n, goal_node):
+    # Ask user to input heuristic values once at start
     return H_dist[n]
 
-# Returns the neighbors and edge weights of a node
 def get_neighbors(v):
     if v in Graph_nodes:
         return Graph_nodes[v]
     return None
 
-# A* Algorithm function
 def aStarAlgo(start_node, stop_node):
-    open_set = set([start_node])      # Nodes to be evaluated
-    closed_set = set()                # Nodes already evaluated
-    g = {}                            # Actual cost from start to the current node
-    parents = {}                      # Parent tracking for path reconstruction
+    open_set = set([start_node])    # Nodes to evaluate
+    closed_set = set()              # Already evaluated nodes
+    g = {}                          # Actual cost from start node
+    parents = {}                    # For tracking shortest path
 
     g[start_node] = 0
     parents[start_node] = start_node
@@ -32,62 +22,76 @@ def aStarAlgo(start_node, stop_node):
     while len(open_set) > 0:
         n = None
 
-        # Select the node with the lowest f(n) = g(n) + h(n)
+        # Choose node with lowest f(n) = g(n) + h(n)
         for v in open_set:
-            if n is None or g[v] + heuristic(v) < g[n] + heuristic(n):
+            if n is None or g[v] + heuristic(v, stop_node) < g[n] + heuristic(n, stop_node):
                 n = v
 
         if n is None:
             print("Path does not exist!")
             return None
 
-        # Goal check
+        # If goal node is reached, build path
         if n == stop_node:
             path = []
-
-            # Backtrack from goal to start using the parent dictionary
             while parents[n] != n:
                 path.append(n)
                 n = parents[n]
             path.append(start_node)
             path.reverse()
-
             print("Path found: {}".format(path))
             return path
 
-        # Explore neighbors of the current node
+        # Check neighbors
         for (m, weight) in get_neighbors(n):
             if m not in open_set and m not in closed_set:
                 open_set.add(m)
                 parents[m] = n
                 g[m] = g[n] + weight
             else:
-                # If already discovered, check if a better path exists
                 if g[m] > g[n] + weight:
                     g[m] = g[n] + weight
                     parents[m] = n
-
-                    # Move from closed_set back to open_set if necessary
                     if m in closed_set:
                         closed_set.remove(m)
                         open_set.add(m)
 
-        # Move the current node to closed_set after exploring
         open_set.remove(n)
         closed_set.add(n)
 
     print("Path does not exist!")
     return None
 
-# Graph structure: node → [(neighbor, weight)]
-Graph_nodes = {
-    'A': [('B', 2), ('E', 3)],
-    'B': [('A', 2), ('C', 1), ('G', 9)],
-    'C': [('B', 1)],
-    'D': [('E', 6), ('G', 1)],
-    'E': [('A', 3), ('D', 6)],
-    'G': [('B', 9), ('D', 1)],
-}
+# ------------------- USER INPUT SECTION ----------------------
+
+# Input: number of nodes
+num_nodes = int(input("Enter number of nodes in the graph: "))
+Graph_nodes = {}
+
+print("\nEnter neighbors for each node in the format: neighbor,weight (comma-separated).")
+print("Example input for node A: B,2 C,3 (meaning A -> B (2), A -> C (3))\n")
+
+# Create graph dictionary
+for _ in range(num_nodes):
+    node = input("Enter node name: ").strip()
+    neighbors_input = input(f"Enter neighbors of {node}: ").strip().split()
+    Graph_nodes[node] = []
+    for pair in neighbors_input:
+        try:
+            neighbor, weight = pair.split(',')
+            Graph_nodes[node].append((neighbor.strip(), int(weight)))
+        except:
+            print("Invalid format. Skipping:", pair)
+
+# Input heuristic values
+print("\nEnter heuristic values for each node to the goal (h(n)):")
+H_dist = {}
+for node in Graph_nodes.keys():
+    H_dist[node] = int(input(f"Heuristic value for {node}: "))
+
+# Start and Goal input
+start = input("\nEnter start node: ").strip()
+goal = input("Enter goal node: ").strip()
 
 # Run the algorithm
-aStarAlgo('A', 'G')
+aStarAlgo(start, goal)
