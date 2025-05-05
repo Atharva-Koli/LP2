@@ -36,5 +36,5 @@ def solve_n_queens(n):
         return False
     print_solution(board)
     return True
-
-solve_n_queens(8)
+n=int(input("Enter the number of queens: "))
+solve_n_queens(n)
